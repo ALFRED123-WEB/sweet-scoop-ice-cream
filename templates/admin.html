@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Sweet Scoop Admin</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f7f7f7;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: white;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        .logout {
+            display: inline-block;
+            margin-top: 10px;
+            text-decoration: none;
+            color: white;
+            background: #d9534f;
+            padding: 10px 18px;
+            border-radius: 6px;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            margin: 30px auto;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .card h2 {
+            margin: 5px 0;
+            font-size: 32px;
+        }
+
+        .orders-title {
+            margin-bottom: 15px;
+        }
+
+        .order {
+            background: white;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .order h3 {
+            margin-top: 0;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 7px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .pending {
+            background: #fff3cd;
+        }
+
+        .delivered {
+            background: #d4edda;
+        }
+
+        .paid {
+            background: #d4edda;
+            color: #155724;
+            padding: 8px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            font-weight: bold;
+        }
+
+        .unpaid {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 8px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            font-weight: bold;
+        }
+
+        .items {
+            background: #f8f8f8;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            white-space: pre-line;
+        }
+
+        .total {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        .actions {
+            margin-top: 20px;
+        }
+
+        button {
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-right: 8px;
+        }
+
+        .deliver-btn {
+            background: #28a745;
+            color: white;
+        }
+
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        .no-orders {
+            background: white;
+            padding: 40px;
+            text-align: center;
+            border-radius: 10px;
+        }
+
+        @media (max-width: 800px) {
+            .dashboard {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 500px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+
+    <h1>🍦 Sweet Scoop Admin</h1>
+
+    <p>Order Management Dashboard</p>
+
+    <a href="{{ url_for('logout') }}" class="logout">
+        🚪 Logout
+    </a>
+
+</header>
+
+
+<div class="container">
+
+    <!-- DASHBOARD -->
+
+    <div class="dashboard">
+
+        <div class="card">
+            <div>📦 Total Orders</div>
+            <h2>{{ total_orders }}</h2>
+        </div>
+
+        <div class="card">
+            <div>⏳ Pending</div>
+            <h2>{{ pending_orders }}</h2>
+        </div>
+
+        <div class="card">
+            <div>✅ Delivered</div>
+            <h2>{{ delivered_orders }}</h2>
+        </div>
+
+        <div class="card">
+            <div>💳 Paid Orders</div>
+
+            <h2>
+                {{ orders|selectattr("payment_status", "equalto", "Paid")|list|length }}
+            </h2>
+        </div>
+
+    </div>
+
+
+    <!-- CUSTOMER ORDERS -->
+
+    <h2 class="orders-title">
+        📦 Customer Orders
+    </h2>
+
+
+    {% if orders %}
+
+        {% for order in orders %}
+
+        <div class="order">
+
+            <h3>
+                Order #{{ order["id"] }}
+            </h3>
+
+
+            <!-- DELIVERY STATUS -->
+
+            {% if order["status"] == "Delivered" %}
+
+                <span class="status delivered">
+                    ✅ Delivered
+                </span>
+
+            {% else %}
+
+                <span class="status pending">
+                    🆕 Pending
+                </span>
+
+            {% endif %}
+
+
+            <!-- PAYMENT STATUS -->
+
+            <p>
+                <strong>Payment:</strong>
+
+                {% if order["payment_status"] == "Paid" %}
+
+                    <span class="paid">
+                        ✅ PAID
+                    </span>
+
+                {% else %}
+
+                    <span class="unpaid">
+                        ⏳ NOT PAID
+                    </span>
+
+                {% endif %}
+
+            </p>
+
+
+            <p>
+                <strong>Customer:</strong>
+                {{ order["customer_name"] }}
+            </p>
+
+
+            <p>
+                <strong>Phone:</strong>
+                {{ order["phone"] }}
+            </p>
+
+
+            <p>
+                <strong>Delivery Address:</strong>
+                {{ order["address"] }}
+            </p>
+
+
+            {% if order["notes"] %}
+
+            <p>
+                <strong>Order Notes:</strong>
+                {{ order["notes"] }}
+            </p>
+
+            {% endif %}
+
+
+            <p>
+                <strong>Order Date:</strong>
+                {{ order["created_at"] }}
+            </p>
+
+
+            <!-- ITEMS -->
+
+            <h3>🍦 Items</h3>
+
+            <div class="items">
+                {{ order["items"] }}
+            </div>
+
+
+            <!-- TOTAL -->
+
+            <div class="total">
+                Total: GH₵ {{ "%.2f"|format(order["total"]) }}
+            </div>
+
+
+            <!-- ACTION BUTTONS -->
+
+            <div class="actions">
+
+                {% if order["status"] != "Delivered" %}
+
+                <form
+                    action="{{ url_for('deliver_order', order_id=order['id']) }}"
+                    method="POST"
+                    style="display:inline;"
+                >
+
+                    <button
+                        type="submit"
+                        class="deliver-btn"
+                    >
+                        ✅ Mark as Delivered
+                    </button>
+
+                </form>
+
+                {% endif %}
+
+
+                <form
+                    action="{{ url_for('delete_order', order_id=order['id']) }}"
+                    method="POST"
+                    style="display:inline;"
+                    onsubmit="return confirm('Delete this order?');"
+                >
+
+                    <button
+                        type="submit"
+                        class="delete-btn"
+                    >
+                        🗑️ Delete
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="no-orders">
+
+            <h2>🍦 No orders yet</h2>
+
+            <p>
+                Customer orders will appear here.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+</html>

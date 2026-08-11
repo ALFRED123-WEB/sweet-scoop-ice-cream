@@ -1,0 +1,5 @@
+.env
+orders.db
+orders_backup.db
+__pycache__/
+*.pyc
