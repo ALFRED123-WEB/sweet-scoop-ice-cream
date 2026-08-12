@@ -2,20 +2,16 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Sweet Scoop Ice Cream</title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
 </head>
 
-
 <body>
-
 
 <!-- ==========================================
      HEADER
@@ -23,35 +19,59 @@
 
 <header>
 
-    <h1>🍦 Sweet Scoop</h1>
+    <div class="logo">
+        🍦 Sweet Scoop
+    </div>
 
     <nav>
-
         <a href="#home">Home</a>
         <a href="#menu">Menu</a>
         <a href="#about">About</a>
         <a href="#contact">Contact</a>
 
+        <a href="#cart" class="cart-link">
+            🛒 Cart
+            <span id="cart-count">0</span>
+        </a>
     </nav>
 
 </header>
-
 
 
 <!-- ==========================================
      HOME
 ========================================== -->
 
-<section id="home">
+<section id="home" class="hero">
 
-    <h2>Happiness in Every Scoop 🍨</h2>
-
-    <p>
-        Delicious, creamy and freshly made ice cream for everyone.
+    <p class="eyebrow">
+        PREMIUM ICE CREAM • MADE WITH LOVE
     </p>
 
-</section>
+    <h1>
+        Happiness in<br>
+        Every Scoop.
+    </h1>
 
+    <p>
+        Discover delicious, creamy ice cream made to
+        brighten your day. Choose your favorite flavor
+        and enjoy a little sweetness.
+    </p>
+
+    <div class="hero-buttons">
+
+        <a href="#menu">
+            Explore Our Flavors 🍨
+        </a>
+
+        <a href="#about">
+            Our Story
+        </a>
+
+    </div>
+
+</section>
 
 
 <!-- ==========================================
@@ -60,111 +80,164 @@
 
 <section id="menu">
 
-    <h2>Our Delicious Flavors 🍦</h2>
+    <p class="section-label">
+        🍦 OUR MENU
+    </p>
 
-    <p>Choose your favorite flavor and enjoy!</p>
+    <h2>
+        Choose Your Favorite
+    </h2>
 
-
-    <!-- STRAWBERRY -->
-
-    <div class="product">
-
-        <h3>🍓 Strawberry</h3>
-
-        <p>
-            Sweet and creamy strawberry ice cream.
-        </p>
-
-        <p>
-            <strong>GH₵ 20</strong>
-        </p>
-
-        <button
-            type="button"
-            onclick="addToCart('Strawberry', 20)"
-        >
-            Add to Cart 🛒
-        </button>
-
-    </div>
+    <p>
+        Four delicious flavors. One very sweet decision.
+    </p>
 
 
-
-    <!-- CHOCOLATE -->
-
-    <div class="product">
-
-        <h3>🍫 Chocolate</h3>
-
-        <p>
-            Rich chocolate ice cream for chocolate lovers.
-        </p>
-
-        <p>
-            <strong>GH₵ 25</strong>
-        </p>
-
-        <button
-            type="button"
-            onclick="addToCart('Chocolate', 25)"
-        >
-            Add to Cart 🛒
-        </button>
-
-    </div>
+    <div class="products">
 
 
+        <!-- ==================================
+             STRAWBERRY
+        ================================== -->
 
-    <!-- BANANA -->
+        <div class="product">
 
-    <div class="product">
+            <img
+                src="{{ url_for('static', filename='images/strawberry.jpg') }}"
+                alt="Strawberry Ice Cream"
+                class="product-image"
+            >
 
-        <h3>🍌 Banana</h3>
+            <h3>
+                🍓 Strawberry
+            </h3>
 
-        <p>
-            Smooth and delicious banana ice cream.
-        </p>
+            <p>
+                Sweet, creamy and bursting with delicious
+                strawberry flavor.
+            </p>
 
-        <p>
-            <strong>GH₵ 22</strong>
-        </p>
+            <p>
+                <strong>GH₵ 20</strong>
+            </p>
 
-        <button
-            type="button"
-            onclick="addToCart('Banana', 22)"
-        >
-            Add to Cart 🛒
-        </button>
+            <button
+                type="button"
+                onclick="addToCart('Strawberry', 20)"
+            >
+                Add to Cart 🛒
+            </button>
 
-    </div>
+        </div>
 
 
+        <!-- ==================================
+             CHOCOLATE
+        ================================== -->
 
-    <!-- VANILLA -->
+        <div class="product">
 
-    <div class="product">
+            <img
+                src="{{ url_for('static', filename='images/chocolate.jpg') }}"
+                alt="Chocolate Ice Cream"
+                class="product-image"
+            >
 
-        <h3>🍦 Vanilla</h3>
+            <h3>
+                🍫 Chocolate
+            </h3>
 
-        <p>
-            Classic creamy vanilla ice cream.
-        </p>
+            <p>
+                Rich, smooth chocolate made for true
+                chocolate lovers.
+            </p>
 
-        <p>
-            <strong>GH₵ 18</strong>
-        </p>
+            <p>
+                <strong>GH₵ 25</strong>
+            </p>
 
-        <button
-            type="button"
-            onclick="addToCart('Vanilla', 18)"
-        >
-            Add to Cart 🛒
-        </button>
+            <button
+                type="button"
+                onclick="addToCart('Chocolate', 25)"
+            >
+                Add to Cart 🛒
+            </button>
+
+        </div>
+
+
+        <!-- ==================================
+             BANANA
+        ================================== -->
+
+        <div class="product">
+
+            <img
+                src="{{ url_for('static', filename='images/banana.jpg') }}"
+                alt="Banana Ice Cream"
+                class="product-image"
+            >
+
+            <h3>
+                🍌 Banana
+            </h3>
+
+            <p>
+                Smooth, creamy banana goodness in every
+                delicious scoop.
+            </p>
+
+            <p>
+                <strong>GH₵ 22</strong>
+            </p>
+
+            <button
+                type="button"
+                onclick="addToCart('Banana', 22)"
+            >
+                Add to Cart 🛒
+            </button>
+
+        </div>
+
+
+        <!-- ==================================
+             VANILLA
+        ================================== -->
+
+        <div class="product">
+
+            <img
+                src="{{ url_for('static', filename='images/vanilla.jpg') }}"
+                alt="Vanilla Ice Cream"
+                class="product-image"
+            >
+
+            <h3>
+                🍦 Vanilla
+            </h3>
+
+            <p>
+                Classic, creamy vanilla with a smooth
+                and timeless taste.
+            </p>
+
+            <p>
+                <strong>GH₵ 18</strong>
+            </p>
+
+            <button
+                type="button"
+                onclick="addToCart('Vanilla', 18)"
+            >
+                Add to Cart 🛒
+            </button>
+
+        </div>
 
     </div>
 
 </section>
-
 
 
 <!-- ==========================================
@@ -173,17 +246,25 @@
 
 <section id="cart">
 
-    <h2>🛒 Your Cart</h2>
+    <p class="section-label">
+        YOUR ORDER
+    </p>
+
+    <h2>
+        🛒 Your Cart
+    </h2>
 
     <div id="cart-items">
 
-        <p>Your cart is empty 🍦</p>
+        <p>
+            Your cart is empty 🍦
+        </p>
 
     </div>
 
 
     <h3>
-        Total:
+        Total
         GH₵ <span id="cart-total">0</span>
     </h3>
 
@@ -192,11 +273,10 @@
         type="button"
         onclick="openCheckout()"
     >
-        🍦 Checkout
+        Secure Checkout
     </button>
 
 </section>
-
 
 
 <!-- ==========================================
@@ -205,17 +285,28 @@
 
 <section id="checkout">
 
-    <h2>🍦 Checkout</h2>
+    <p class="section-label">
+        SECURE CHECKOUT
+    </p>
 
+    <h2>
+        Complete Your Order
+    </h2>
 
-    <!-- THIS FORM SENDS THE ORDER TO FLASK -->
+    <p>
+        Enter your details below and continue to
+        secure payment.
+    </p>
+
 
     <form
         action="/place-order"
         method="POST"
-        onsubmit="prepareOrder()"
+        onsubmit="return prepareOrder()"
     >
 
+
+        <!-- CUSTOMER NAME -->
 
         <label for="customer-name">
             Full Name
@@ -230,6 +321,7 @@
         >
 
 
+        <!-- PHONE -->
 
         <label for="customer-phone">
             Phone Number
@@ -244,6 +336,7 @@
         >
 
 
+        <!-- ADDRESS -->
 
         <label for="customer-address">
             Delivery Address
@@ -258,6 +351,7 @@
         >
 
 
+        <!-- NOTES -->
 
         <label for="order-notes">
             Order Notes
@@ -270,18 +364,13 @@
         ></textarea>
 
 
-
-        <!--
-            These hidden fields are filled
-            automatically by script.js
-        -->
+        <!-- HIDDEN ORDER DATA -->
 
         <input
             type="hidden"
             id="order-items"
             name="items"
         >
-
 
         <input
             type="hidden"
@@ -290,32 +379,30 @@
         >
 
 
+        <!-- TOTAL -->
 
         <h3>
-
             Total to Pay:
-
-            GH₵
-
-            <span id="checkout-total">
-                0
-            </span>
-
+            GH₵ <span id="checkout-total">0</span>
         </h3>
 
 
+        <!-- PAYMENT -->
 
         <button
             type="submit"
         >
-            Place Order 🍦
+            🍦 Place Order & Pay
         </button>
 
+
+        <p>
+            🔒 Secure payment powered by Paystack
+        </p>
 
     </form>
 
 </section>
-
 
 
 <!-- ==========================================
@@ -324,21 +411,28 @@
 
 <section id="about">
 
-    <h2>About Sweet Scoop</h2>
+    <p class="section-label">
+        OUR STORY
+    </p>
+
+    <h2>
+        Made for Sweet Moments.
+    </h2>
 
     <p>
+        Sweet Scoop is an ice cream brand created with
+        one simple idea: everyone deserves a little
+        sweetness in their day.
+    </p>
 
-        Sweet Scoop is a small ice cream shop
-        created with love.
-
-        We serve delicious ice cream made for
-        friends, families and everyone who loves
-        a sweet treat.
-
+    <p>
+        From classic vanilla to rich chocolate and
+        fruity favorites, we serve delicious ice cream
+        made for friends, families and everyone who
+        loves a sweet treat.
     </p>
 
 </section>
-
 
 
 <!-- ==========================================
@@ -347,22 +441,40 @@
 
 <section id="contact">
 
-    <h2>Contact Us 📞</h2>
-
-    <p>
-        Email: hello@sweetscoop.com
+    <p class="section-label">
+        GET IN TOUCH
     </p>
 
-    <p>
-        Phone: +233 50 000 0000
-    </p>
+    <h2>
+        We'd Love to Hear From You
+    </h2>
 
-    <p>
-        Location: Accra, Ghana
-    </p>
+
+    <div class="contact-info">
+
+        <div>
+            <span>📧</span>
+            <strong>Email</strong>
+            <p>hello@sweetscoop.com</p>
+        </div>
+
+
+        <div>
+            <span>📞</span>
+            <strong>Phone</strong>
+            <p>+233 50 000 0000</p>
+        </div>
+
+
+        <div>
+            <span>📍</span>
+            <strong>Location</strong>
+            <p>Accra, Ghana</p>
+        </div>
+
+    </div>
 
 </section>
-
 
 
 <!-- ==========================================
@@ -370,6 +482,14 @@
 ========================================== -->
 
 <footer>
+
+    <div>
+        🍦 Sweet Scoop
+    </div>
+
+    <p>
+        Delicious moments, one scoop at a time.
+    </p>
 
     <p>
         © 2026 Sweet Scoop Ice Cream.
@@ -379,15 +499,13 @@
 </footer>
 
 
-
 <!-- ==========================================
      JAVASCRIPT
 ========================================== -->
 
 <script
-    src="{{ url_for('static', filename='script.js') }}"
-></script>
-
+    src="{{ url_for('static', filename='script.js') }}">
+</script>
 
 </body>
 

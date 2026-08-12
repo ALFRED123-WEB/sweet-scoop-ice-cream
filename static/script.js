@@ -1,5 +1,5 @@
 // ==========================================
-// SWEET SCOOP SHOP
+// SWEET SCOOP SHOP - CART SYSTEM
 // ==========================================
 
 let cart = [];
@@ -30,7 +30,62 @@ function addToCart(name, price) {
     }
 
     updateCart();
+}
 
+
+// ==========================================
+// INCREASE QUANTITY
+// ==========================================
+
+function increaseQuantity(index) {
+
+    if (!cart[index]) {
+        return;
+    }
+
+    cart[index].quantity += 1;
+
+    updateCart();
+}
+
+
+// ==========================================
+// DECREASE QUANTITY
+// ==========================================
+
+function decreaseQuantity(index) {
+
+    if (!cart[index]) {
+        return;
+    }
+
+    if (cart[index].quantity > 1) {
+
+        cart[index].quantity -= 1;
+
+    } else {
+
+        cart.splice(index, 1);
+
+    }
+
+    updateCart();
+}
+
+
+// ==========================================
+// REMOVE FROM CART
+// ==========================================
+
+function removeFromCart(index) {
+
+    if (!cart[index]) {
+        return;
+    }
+
+    cart.splice(index, 1);
+
+    updateCart();
 }
 
 
@@ -46,14 +101,45 @@ function updateCart() {
     const cartTotal =
         document.getElementById("cart-total");
 
+    const cartCount =
+        document.getElementById("cart-count");
+
+    const checkoutTotal =
+        document.getElementById("checkout-total");
+
+
+    // ======================================
+    // UPDATE CART COUNTER
+    // ======================================
+
+    if (cartCount) {
+
+        const totalQuantity = cart.reduce(
+            (sum, item) => sum + item.quantity,
+            0
+        );
+
+        cartCount.textContent = totalQuantity;
+    }
+
+
+    // ======================================
+    // CHECK CART ELEMENTS
+    // ======================================
 
     if (!cartItems || !cartTotal) {
         return;
     }
 
 
+    // Clear current cart display
+
     cartItems.innerHTML = "";
 
+
+    // ======================================
+    // EMPTY CART
+    // ======================================
 
     if (cart.length === 0) {
 
@@ -62,12 +148,27 @@ function updateCart() {
 
         cartTotal.textContent = "0";
 
+
+        if (checkoutTotal) {
+
+            checkoutTotal.textContent = "0";
+
+        }
+
         return;
     }
 
 
+    // ======================================
+    // CALCULATE TOTAL
+    // ======================================
+
     let total = 0;
 
+
+    // ======================================
+    // DISPLAY CART ITEMS
+    // ======================================
 
     cart.forEach((item, index) => {
 
@@ -80,17 +181,64 @@ function updateCart() {
         const div =
             document.createElement("div");
 
+        div.className = "cart-item";
+
 
         div.innerHTML = `
-            <p>
-                <strong>${item.name}</strong>
-                × ${item.quantity}
-                — GH₵ ${itemTotal}
 
-                <button onclick="removeFromCart(${index})">
-                    Remove
+            <div class="cart-item-info">
+
+                <strong>
+                    ${item.name}
+                </strong>
+
+                <span>
+                    GH₵ ${item.price} each
+                </span>
+
+            </div>
+
+
+            <div class="cart-item-controls">
+
+                <button
+                    type="button"
+                    onclick="decreaseQuantity(${index})"
+                >
+                    −
                 </button>
-            </p>
+
+
+                <span class="quantity">
+                    ${item.quantity}
+                </span>
+
+
+                <button
+                    type="button"
+                    onclick="increaseQuantity(${index})"
+                >
+                    +
+                </button>
+
+            </div>
+
+
+            <div class="cart-item-total">
+
+                GH₵ ${itemTotal}
+
+            </div>
+
+
+            <button
+                type="button"
+                class="remove-button"
+                onclick="removeFromCart(${index})"
+            >
+                Remove
+            </button>
+
         `;
 
 
@@ -99,21 +247,18 @@ function updateCart() {
     });
 
 
+    // ======================================
+    // UPDATE TOTAL
+    // ======================================
+
     cartTotal.textContent = total;
 
-}
 
+    if (checkoutTotal) {
 
-// ==========================================
-// REMOVE FROM CART
-// ==========================================
+        checkoutTotal.textContent = total;
 
-function removeFromCart(index) {
-
-    cart.splice(index, 1);
-
-    updateCart();
-
+    }
 }
 
 
@@ -126,6 +271,7 @@ function openCheckout() {
     const checkout =
         document.getElementById("checkout");
 
+
     if (!checkout) {
         return;
     }
@@ -134,19 +280,21 @@ function openCheckout() {
     const checkoutTotal =
         document.getElementById("checkout-total");
 
-
     const cartTotal =
         document.getElementById("cart-total");
 
 
-    checkoutTotal.textContent =
-        cartTotal.textContent;
+    if (checkoutTotal && cartTotal) {
+
+        checkoutTotal.textContent =
+            cartTotal.textContent;
+
+    }
 
 
     checkout.scrollIntoView({
         behavior: "smooth"
     });
-
 }
 
 
@@ -164,9 +312,28 @@ function prepareOrder() {
 
 
     if (!itemsInput || !totalInput) {
-        return;
+
+        return false;
     }
 
+
+    // ======================================
+    // DON'T ALLOW EMPTY ORDERS
+    // ======================================
+
+    if (cart.length === 0) {
+
+        alert(
+            "Your cart is empty. Please add an ice cream first 🍦"
+        );
+
+        return false;
+    }
+
+
+    // ======================================
+    // PREPARE ITEMS
+    // ======================================
 
     let itemsText = "";
 
@@ -184,23 +351,34 @@ function prepareOrder() {
     });
 
 
+    // ======================================
+    // CALCULATE TOTAL
+    // ======================================
+
     const total =
         cart.reduce(
             (sum, item) =>
-                sum + (item.price * item.quantity),
+                sum +
+                (item.price * item.quantity),
             0
         );
 
+
+    // ======================================
+    // SEND DATA TO FLASK
+    // ======================================
 
     itemsInput.value = itemsText;
 
     totalInput.value = total;
 
+
+    return true;
 }
 
 
 // ==========================================
-// INITIALIZE
+// INITIALIZE CART
 // ==========================================
 
 document.addEventListener(
