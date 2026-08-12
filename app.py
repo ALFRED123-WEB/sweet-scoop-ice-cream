@@ -13,8 +13,12 @@ DATABASE = "orders.db"
 # Paystack Test Secret Key
 PAYSTACK_SECRET_KEY = os.environ.get("PAYSTACK_SECRET_KEY")
 
-# Your local Flask website
-BASE_URL = os.getenv("RENDER_EXTERNAL_URL", "http://127.0.0.1:5000")
+# Automatically use Render's live URL when deployed.
+# Locally it falls back to http://127.0.0.1:5000
+BASE_URL = os.getenv(
+    "RENDER_EXTERNAL_URL",
+    "http://127.0.0.1:5000"
+)
 
 
 # ============================================================
@@ -127,7 +131,6 @@ def place_order():
     connection.commit()
     connection.close()
 
-    # Send customer to payment
     return redirect(url_for(
         "initialize_payment",
         order_id=order_id
@@ -144,7 +147,7 @@ def initialize_payment(order_id):
     if not PAYSTACK_SECRET_KEY:
         return """
         <h2>Paystack is not configured yet.</h2>
-        <p>Please make sure PAYSTACK_SECRET_KEY is set in the terminal.</p>
+        <p>Please make sure PAYSTACK_SECRET_KEY is set.</p>
         """, 500
 
     connection = sqlite3.connect(DATABASE)
@@ -169,11 +172,14 @@ def initialize_payment(order_id):
         "Content-Type": "application/json"
     }
 
+    # Unique reference for every payment attempt
+    reference = f"sweetscoop-{order_id}-{int(time.time())}"
+
     data = {
         "email": "customer@sweetscoop.com",
         "amount": amount_in_pesewas,
         "currency": "GHS",
-       "reference": f"sweetscoop-{order_id}-{int(time.time())}",
+        "reference": reference,
         "callback_url": f"{BASE_URL}/payment/callback"
     }
 
@@ -267,13 +273,17 @@ def verify_payment(reference):
 
         order_id = None
 
+        # Our reference format is:
+        # sweetscoop-ORDER_ID-TIMESTAMP
         try:
-            if reference.startswith("sweetscoop-order-"):
-                order_id = int(
-                    reference.replace("sweetscoop-order-", "")
-                )
-        except ValueError:
-            pass
+            if reference.startswith("sweetscoop-"):
+                parts = reference.split("-")
+
+                if len(parts) >= 2:
+                    order_id = int(parts[1])
+
+        except (ValueError, IndexError):
+            order_id = None
 
         if order_id:
 
@@ -409,6 +419,12 @@ def admin():
         WHERE status = 'Delivered'
     """).fetchone()[0]
 
+    paid_orders = connection.execute("""
+        SELECT COUNT(*)
+        FROM orders
+        WHERE payment_status = 'Paid'
+    """).fetchone()[0]
+
     connection.close()
 
     return render_template(
@@ -416,7 +432,8 @@ def admin():
         orders=orders,
         total_orders=total_orders,
         pending_orders=pending_orders,
-        delivered_orders=delivered_orders
+        delivered_orders=delivered_orders,
+        paid_orders=paid_orders
     )
 
 
@@ -486,9 +503,6 @@ def logout():
 @app.route("/paystack/webhook", methods=["POST"])
 def paystack_webhook():
 
-    # We will add signature verification here
-    # when we configure the Paystack webhook URL.
-
     data = request.get_json(silent=True)
 
     if not data:
@@ -506,15 +520,17 @@ def paystack_webhook():
 
             order_id = None
 
+            # Our reference format:
+            # sweetscoop-ORDER_ID-TIMESTAMP
             try:
-                if reference.startswith("sweetscoop-order-"):
-                    order_id = int(
-                        reference.replace(
-                            "sweetscoop-order-", ""
-                        )
-                    )
-            except ValueError:
-                pass
+                if reference.startswith("sweetscoop-"):
+                    parts = reference.split("-")
+
+                    if len(parts) >= 2:
+                        order_id = int(parts[1])
+
+            except (ValueError, IndexError):
+                order_id = None
 
             if order_id:
 
