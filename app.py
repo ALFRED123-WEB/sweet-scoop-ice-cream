@@ -3,6 +3,7 @@ import sqlite3
 import requests
 import os
 import json
+import time
 
 app = Flask(__name__)
 app.secret_key = "sweet-scoop-secret-key"
@@ -13,7 +14,7 @@ DATABASE = "orders.db"
 PAYSTACK_SECRET_KEY = os.environ.get("PAYSTACK_SECRET_KEY")
 
 # Your local Flask website
-BASE_URL = "http://127.0.0.1:5000"
+BASE_URL = os.getenv("RENDER_EXTERNAL_URL", "http://127.0.0.1:5000")
 
 
 # ============================================================
@@ -172,7 +173,7 @@ def initialize_payment(order_id):
         "email": "customer@sweetscoop.com",
         "amount": amount_in_pesewas,
         "currency": "GHS",
-        "reference": f"sweetscoop-order-{order_id}",
+       "reference": f"sweetscoop-{order_id}-{int(time.time())}",
         "callback_url": f"{BASE_URL}/payment/callback"
     }
 
